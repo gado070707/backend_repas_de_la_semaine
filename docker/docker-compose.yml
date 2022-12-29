@@ -1,0 +1,39 @@
+version: '3.1'
+
+services:
+  db:
+    image: mariadb:10.6
+    container_name: bdd
+    hostname: bdd
+    restart: unless-stopped
+    # network_mode: bridge
+    volumes:
+      - ./dossiers_de_configuration/bdd:/var/lib/mysql
+      - ./dossiers_de_configuration/conf:/etc/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+    networks:
+      backend_menu:
+        ipv4_address: 10.5.0.2
+
+  phpmyadmin:
+    image: phpmyadmin
+    container_name: pma
+    hostname: pma
+    restart: unless-stopped
+    # network_mode: bridge
+    ports:
+      - 8282:80
+    environment:
+      - PMA_ARBITRARY=1
+    networks:
+      backend_menu:
+        ipv4_address: 10.5.0.3
+
+networks:
+  backend_menu:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.5.0.0/24
+          # gateway: 10.5.0.1
