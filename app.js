@@ -8,6 +8,7 @@ require("dotenv").config();
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/routerUsers');
 var viandesRouter = require('./routes/routerViandes');
+var repasdujourRouter = require('./routes/routerRepasDuJour');
 var app = express();
 
 const port = 8585
@@ -41,6 +42,7 @@ app.use((req, res, next) => {
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/viandes', viandesRouter);
+app.use('/repasdujour', repasdujourRouter);
 
 
 // catch 404 and forward to error handler

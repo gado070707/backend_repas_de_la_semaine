@@ -201,7 +201,8 @@ const supprimerViande = (async function (req, res, next){
 
 
 
-const ajouterViande = ( async function(req, res, next) {
+const ajouterRepasduJourDansViandes = ( async function(req, res, next) {
+    console.log("AjouterViande ");
     verification_de_la_presence_du_parametre_req_body(req,res,next).then(async ()=>{
     // Check mandatory request parameters
         if (!req.body.nom) {
@@ -212,9 +213,12 @@ const ajouterViande = ( async function(req, res, next) {
         verification_de_la_presence_du_nom_de_la_viande_dans_la_bdd(req.body.nom).then(function (nom_bdd) { 
             console.log(nom_bdd + " VS " + req.body.nom);
             if (nom_bdd == req.body.nom) {
-                return res.status(409).json({ error: 'La viandes existe déjà' });
+                ajouterRepasDuJourLundi(nom_bdd);
+                return res.status(409).json({ error: 'La viandes existe déjà mais sera ajouté à lundi' });
+                // return 90;
             }
             else{
+                // ajouterRepasDuJourLundi(nom_bdd);
                 nom_de_viande_a_ajouter(req.body.nom)
                 res.status(200).json({ message: "La viande a été ajoutée correctement"});
             }
@@ -222,11 +226,36 @@ const ajouterViande = ( async function(req, res, next) {
     });
 });
 
+
+
+async function ajouterRepasDuJourLundi(reponse){
+    console.log(" reponse : " + reponse);
+    verification_de_la_presence_du_nom_de_la_viande_dans_la_bdd_table_repasdujour(reponse).then(async function(data) {
+        console.log("data = " +  data);
+        if(data == "null"){
+            console.log("data = " + data);
+            try {
+                conn = await pool.getConnection();
+                var query = "INSERT INTO `repas du jour`(`id_jours`, `id_viandes`) VALUES (1,(SELECT id FROM viandes WHERE id LIKE '"+data+"'));";
+                // var query = "INSERT INTO viandes VALUES (" + ((await id_max()) + 1) + "," + "'"+nom+"'" + ")";
+                await conn.query(query)
+            } catch (err) {
+                throw err;
+            } finally {
+                if (conn) await conn.release();
+            }
+        }
+    });
+
+console.log('Bonjour');
+};
+
   
 
 async function nom_de_viande_a_ajouter (nom){    
     try {
         conn = await pool.getConnection();
+        // var query = "INSERT INTO `repas du jour`(`id_jours`, `id_viandes`) VALUES (1," + "'"+nom+"'" + ")";
         var query = "INSERT INTO viandes VALUES (" + ((await id_max()) + 1) + "," + "'"+nom+"'" + ")";
         await conn.query(query)
     } catch (err) {
@@ -235,6 +264,8 @@ async function nom_de_viande_a_ajouter (nom){
         if (conn) await conn.release();
     }
 };
+
+
 
 
 
@@ -297,6 +328,31 @@ async function verification_de_la_presence_du_nom_de_la_viande_dans_la_bdd(req_n
 
 
 
+async function verification_de_la_presence_du_nom_de_la_viande_dans_la_bdd_table_repasdujour(req_nom){
+    try {
+        conn = await pool.getConnection();
+        // console.log("req_nom = " + req_nom);
+        var query = "select r.id_viandes AS VIANDES FROM `repas du jour` r INNER JOIN `viandes` v ON v.id = r.id_viandes INNER JOIN `jours` j ON j.id = r.id_jours WHERE j.nom LIKE 'Lundi' AND r.id_viandes LIKE ( SELECT v.id FROM viandes v WHERE v.nom LIKE '"+req_nom+"')";
+        var bdd_nom = await conn.query(query);
+        // console.log("bdd_nom[0] = " + bdd_nom[0].VIANDES);
+
+        if(typeof bdd_nom[0] !== "undefined"){
+            return bdd_nom[0].VIANDES;
+        }
+        else{
+            return null;
+        }
+        
+    } catch (err) {
+        throw err;
+    } 
+    finally {
+        if (conn) await conn.release();
+    }
+}
+
+
+
 module.exports = {
     afficherRepasDuJourLundi, 
     afficherRepasDuJourMardi, 
@@ -306,5 +362,6 @@ module.exports = {
     afficherRepasDuJourSamediMidi, 
     afficherRepasDuJourSamedi, 
     afficherRepasDuJourDimancheMidi, 
-    afficherRepasDuJourDimanche 
+    afficherRepasDuJourDimanche,
+    ajouterRepasduJourDansViandes
 };
