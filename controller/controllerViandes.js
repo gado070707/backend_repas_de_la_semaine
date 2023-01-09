@@ -85,7 +85,7 @@ const ajouterViande = ( async function(req, res, next) {
         verification_de_la_presence_du_nom_de_la_viande_dans_la_bdd(req.body.nom).then(function (nom_bdd) { 
             console.log(nom_bdd + " VS " + req.body.nom);
             if (nom_bdd == req.body.nom) {
-                return res.status(409).json({ error: 'La viandes existe déjà' });
+                return res.status(409).json({ error: 'La viandes existe déjà ok ok' });
             }
             else{
                 nom_de_viande_a_ajouter(req.body.nom)
