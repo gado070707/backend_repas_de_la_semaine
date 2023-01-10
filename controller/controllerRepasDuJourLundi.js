@@ -66,9 +66,10 @@ const supprimerViande = (async function (req, res, next){
 
 
 const ajouterRepasduJourDansViandes = ( async function(req, res, next) {
-    console.log("AjouterViande ");
+    console.log("AjouterViande : " + req.body.nom);
     verification_de_la_presence_du_parametre_req_body(req,res,next).then(async ()=>{
     // Check mandatory request parameters
+
         if (!req.body.nom) {
             return res.status(400).json({ error: 'Il manque le paramètre' });
         }   
@@ -96,7 +97,8 @@ async function ajouterRepasDuJourLundi(reponse){
     console.log(" reponse : " + reponse);
     verification_de_la_presence_du_nom_de_la_viande_dans_la_bdd_table_repasdujour(reponse).then(async function(data) {
         console.log("data = " +  data);
-        if(data == "null"){
+        console.log("typeof data = " + typeof data);
+        if(typeof data == "undefined"){
             console.log("data = " + data);
             try {
                 conn = await pool.getConnection();
@@ -110,11 +112,10 @@ async function ajouterRepasDuJourLundi(reponse){
             }
         }
         else{
+            console.log("SINON data = " + data);
             return null;
         }
     });
-
-console.log('Bonjour');
 };
 
   
@@ -202,12 +203,13 @@ async function verification_de_la_presence_du_nom_de_la_viande_dans_la_bdd_table
         var query = "select r.id_viandes AS VIANDES FROM `repas du jour` r INNER JOIN `viandes` v ON v.id = r.id_viandes INNER JOIN `jours` j ON j.id = r.id_jours WHERE j.nom LIKE 'Lundi' AND r.id_viandes LIKE ( SELECT v.id FROM viandes v WHERE v.nom LIKE '"+req_nom+"')";
         var bdd_nom = await conn.query(query);
         // console.log("bdd_nom[0] = " + bdd_nom[0].VIANDES);
-
         if(typeof bdd_nom[0] !== "undefined"){
+            console.log("SI = " + bdd_nom[0].VIANDES);
             return bdd_nom[0].VIANDES;
         }
         else{
-            return null;
+            console.log("SINON = " + bdd_nom[0]);
+            return bdd_nom[0];
         }
         
     } catch (err) {
