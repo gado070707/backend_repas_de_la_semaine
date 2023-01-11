@@ -40,27 +40,61 @@ const afficherViande = (async function (req, res, next){
 
 
 
-const supprimerViande = (async function (req, res, next){    
+const supprimerRepasDuJourLundi = (async function (req, res, next){    
     let conn;
-    try {
-        conn = await pool.getConnection();
-        var query1 = "SELECT * FROM viandes WHERE nom = '" + req.body.nom + "'";
-        var rows1 = await conn.query(query1);
-        if((typeof rows1[0]) !== "undefined"){
-            console.log("if = query1[0].nom = " +  rows1[0].nom);
-            var query2 = "DELETE FROM viandes WHERE nom = '" + req.body.nom + "'";
-            var rows2 = await conn.query(query2);
-            res.status(200).json({ message: "La viande a été supprimée correctement"});
-        }
-        else{
-            res.status(200).json({ message: "La viande n'existe pas et ne peut donc pas être supprimée"});
+    console.log("supprimer req.body.nom = " + req.body.nom);
+
+    verification_de_la_presence_du_nom_de_la_viande_dans_la_bdd_table_repasdujour(req.body.nom).then(async function (id){
+        console.log("id = " + id);
+        try {
+            conn = await pool.getConnection();
+            // var query = "DELETE FROM `repas du jour` WHERE id_viandes = ( SELECT id FROM viandes WHERE nom LIKE '" + req.body.nom + "'";
+            var query = "DELETE FROM `repas du jour` WHERE id_viandes = '" + d + "'";
+            console.log("query = " + query);
+            var rows = await conn.query(query);
+            console.log("typeof rows[0] = " + typeof rows[0]);
+            console.log(rows[0]);
+            if((typeof rows[0]) != "undefined"){
+                res.status(200).json({ message: "La viande a été supprimée correctement"});
+            }
+            else{
+                res.status(200).json({ message: "La viande n'existe pas et ne peut donc pas être supprimée"});
+            }
+    
+        } catch (err) {
+            throw err;
+        } finally {
+            if (conn) return conn.release();
         }
 
-    } catch (err) {
-        throw err;
-    } finally {
-        if (conn) return conn.release();
-    }
+    });
+
+
+
+
+
+    // try {
+    //     conn = await pool.getConnection();
+    //     var query1 = "SELECT * FROM `repas du jour` WHERE id_viandes = ( SELECT id FROM viandes WHERE nom LIKE '" + req.body.nom + "'";
+    //     var rows1 = await conn.query(query1);
+    //     console.log("typeof rows1[0] = " + typeof rows1[0]);
+    //     // console.log(rows1[0]);
+    //     if((typeof rows1[0]) != "undefined"){
+    //         console.log("if = query1[0].nom = " +  rows1[0].nom);
+    //         // var query2 = "DELETE FROM viandes WHERE nom = '" + req.body.nom + "'";
+    //         var query2 = "DELETE FROM `repas du jour` WHERE id_viandes = ( SELECT id FROM viandes WHERE nom LIKE '" + req.body.nom + "'";
+    //         var rows2 = await conn.query(query2);
+    //         res.status(200).json({ message: "La viande a été supprimée correctement"});
+    //     }
+    //     else{
+    //         res.status(200).json({ message: "La viande n'existe pas et ne peut donc pas être supprimée"});
+    //     }
+
+    // } catch (err) {
+    //     throw err;
+    // } finally {
+    //     if (conn) return conn.release();
+    // }
   });
 
 
@@ -71,6 +105,7 @@ const ajouterRepasduJourDansViandes = ( async function(req, res, next) {
     // Check mandatory request parameters
 
         if (!req.body.nom) {
+            console.log("req.body.nom = " + req.body.nom);
             return res.status(400).json({ error: 'Il manque le paramètre' });
         }   
 
@@ -78,13 +113,15 @@ const ajouterRepasduJourDansViandes = ( async function(req, res, next) {
         verification_de_la_presence_du_nom_de_la_viande_dans_la_table_viandes(req.body.nom).then(function (nom_bdd) { 
             console.log(nom_bdd + " VS " + req.body.nom);
             if (nom_bdd == req.body.nom) {
-                ajouterRepasDuJourLundi(nom_bdd);
-                return res.status(409).json({ error: 'La repas sera ajouté à lundi' });
+                ajouterRepasDuJourLundi(req.body.nom);
+                return res.status(200).json({ error: 'La repas sera ajouté à lundi' });
+                // return res.status(409).json({ error: 'La repas sera ajouté à lundi' });
                 // return 90;
             }
             else{
-                ajouterRepasDuJourLundi(nom_bdd);
-                nom_de_viande_a_ajouter(req.body.nom)
+                nom_de_viande_a_ajouter(req.body.nom).then(()=>{
+                    ajouterRepasDuJourLundi(req.body.nom);
+                });
                 res.status(200).json({ message: "La viande a été ajoutée correctement"});
             }
         });
@@ -96,13 +133,13 @@ const ajouterRepasduJourDansViandes = ( async function(req, res, next) {
 async function ajouterRepasDuJourLundi(reponse){
     console.log(" reponse : " + reponse);
     verification_de_la_presence_du_nom_de_la_viande_dans_la_bdd_table_repasdujour(reponse).then(async function(data) {
-        console.log("data = " +  data);
-        console.log("typeof data = " + typeof data);
-        if(typeof data == "undefined"){
+        // console.log("data = " +  data);
+        // console.log("typeof data = " + typeof data);
+        if(data == null){
             console.log("data = " + data);
             try {
                 conn = await pool.getConnection();
-                var query = "INSERT INTO `repas du jour`(`id_jours`, `id_viandes`) VALUES (1,(SELECT id FROM viandes WHERE id LIKE '"+data+"'));";
+                var query = "INSERT INTO `repas du jour`(`id_jours`, `id_viandes`) VALUES (1,(SELECT id FROM viandes WHERE nom LIKE '"+reponse+"'));";
                 // var query = "INSERT INTO viandes VALUES (" + ((await id_max()) + 1) + "," + "'"+nom+"'" + ")";
                 await conn.query(query)
             } catch (err) {
@@ -199,17 +236,17 @@ async function verification_de_la_presence_du_nom_de_la_viande_dans_la_table_via
 async function verification_de_la_presence_du_nom_de_la_viande_dans_la_bdd_table_repasdujour(req_nom){
     try {
         conn = await pool.getConnection();
-        // console.log("req_nom = " + req_nom);
+        console.log("req_nom = " + req_nom);
         var query = "select r.id_viandes AS VIANDES FROM `repas du jour` r INNER JOIN `viandes` v ON v.id = r.id_viandes INNER JOIN `jours` j ON j.id = r.id_jours WHERE j.nom LIKE 'Lundi' AND r.id_viandes LIKE ( SELECT v.id FROM viandes v WHERE v.nom LIKE '"+req_nom+"')";
         var bdd_nom = await conn.query(query);
         // console.log("bdd_nom[0] = " + bdd_nom[0].VIANDES);
-        if(typeof bdd_nom[0] !== "undefined"){
+        if(typeof bdd_nom[0] != "undefined"){
             console.log("SI = " + bdd_nom[0].VIANDES);
             return bdd_nom[0].VIANDES;
         }
         else{
             console.log("SINON = " + bdd_nom[0]);
-            return bdd_nom[0];
+            return null;
         }
         
     } catch (err) {
@@ -224,5 +261,6 @@ async function verification_de_la_presence_du_nom_de_la_viande_dans_la_bdd_table
 
 module.exports = {
     afficherRepasDuJourLundi, 
-    ajouterRepasduJourDansViandes
+    ajouterRepasduJourDansViandes,
+    supprimerRepasDuJourLundi
 };
