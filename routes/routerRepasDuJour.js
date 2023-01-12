@@ -1,14 +1,11 @@
 var express = require('express');
 var router = express.Router();
 var routerRepasDuJourLundi = require('./routerRepasDuJourLundi');
-// const { afficherRepasDuJourMardi  } = require('../controller/controllerRepasDuJourMardi')
-// afficherRepasDuJourMardi
+var routerRepasDuJourMardi = require('./routerRepasDuJourMardi');
+var routerRepasDuJourMercredi = require('./routerRepasDuJourMercredi');
 
-/* GET viandes page. */
-// router.get('/', afficherRepasDuJourLundi);
 router.use('/lundi', routerRepasDuJourLundi);
-// router.use('/mardi', afficherRepasDuJourMardi);
-// router.post('/lundi/ajouter', ajouterRepasDuJourLundi);
-// router.delete('/lundi/supprimer', supprimerRepasDuJourLundi);
+router.use('/mardi', routerRepasDuJourMardi);
+router.use('/mercredi', routerRepasDuJourMercredi);
 
 module.exports = router;
