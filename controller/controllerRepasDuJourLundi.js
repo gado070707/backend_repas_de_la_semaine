@@ -1,7 +1,5 @@
 const pool = require('../conf/bdd/bdd')
 
-console.log("Connexion bdd ok");
-
 const afficherRepasDuJourLundi = (async function (req, res, next){    
   let conn;
   conn;

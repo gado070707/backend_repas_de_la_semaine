@@ -1,13 +1,11 @@
 const pool = require('../conf/bdd/bdd')
 
-console.log("Connexion bdd ok");
-
-const afficherRepasDuJourLundi = (async function (req, res, next){    
+const afficherRepasDuJourDimancheMidi = (async function (req, res, next){    
   let conn;
   conn;
   try {
       conn = await pool.getConnection();
-      var query = "select v.nom AS VIANDES FROM `repas du jour` r INNER JOIN `viandes` v ON v.id = r.id_viandes INNER JOIN `jours` j ON j.id = r.id_jours WHERE j.nom LIKE 'Lundi'";
+      var query = "select v.nom AS VIANDES FROM `repas du jour` r INNER JOIN `viandes` v ON v.id = r.id_viandes INNER JOIN `jours` j ON j.id = r.id_jours WHERE j.nom LIKE 'DimancheMidi'";
       var rows = await conn.query(query);
       res.send(rows);
   } catch (err) {
@@ -40,7 +38,7 @@ const afficherViande = (async function (req, res, next){
 
 
 
-const supprimerRepasDuJourLundi = (async function (req, res, next){    
+const supprimerRepasDuJourDimancheMidi = (async function (req, res, next){    
     let conn;
     console.log("supprimer req.body.nom = " + req.body.nom);
 
@@ -86,14 +84,14 @@ const ajouterRepasduJourDansViandes = ( async function(req, res, next) {
         verification_de_la_presence_du_nom_de_la_viande_dans_la_table_viandes(req.body.nom).then(function (nom_bdd) { 
             console.log(nom_bdd + " VS " + req.body.nom);
             if (nom_bdd == req.body.nom) {
-                ajouterRepasDuJourLundi(req.body.nom);
-                return res.status(200).json({ error: 'La repas sera ajouté à lundi' });
-                // return res.status(409).json({ error: 'La repas sera ajouté à lundi' });
+                ajouterRepasDuJourDimancheMidi(req.body.nom);
+                return res.status(200).json({ error: 'La repas sera ajouté à dimanche midi' });
+                // return res.status(409).json({ error: 'La repas sera ajouté à dimanche midi' });
                 // return 90;
             }
             else{
                 nom_de_viande_a_ajouter(req.body.nom).then(()=>{
-                    ajouterRepasDuJourLundi(req.body.nom);
+                    ajouterRepasDuJourDimancheMidi(req.body.nom);
                 });
                 res.status(200).json({ message: "La viande a été ajoutée correctement"});
             }
@@ -103,7 +101,7 @@ const ajouterRepasduJourDansViandes = ( async function(req, res, next) {
 
 
 
-async function ajouterRepasDuJourLundi(reponse){
+async function ajouterRepasDuJourDimancheMidi(reponse){
     console.log(" reponse : " + reponse);
     verification_de_la_presence_du_nom_de_la_viande_dans_la_bdd_table_repasdujour(reponse).then(async function(data) {
         // console.log("data = " +  data);
@@ -112,7 +110,7 @@ async function ajouterRepasDuJourLundi(reponse){
             console.log("data = " + data);
             try {
                 conn = await pool.getConnection();
-                var query = "INSERT INTO `repas du jour`(`id_jours`, `id_viandes`) VALUES ((SELECT id FROM jours WHERE nom = 'Lundi'),(SELECT id FROM viandes WHERE nom LIKE '"+reponse+"'));";
+                var query = "INSERT INTO `repas du jour`(`id_jours`, `id_viandes`) VALUES ((SELECT id FROM jours WHERE nom = 'Dimanche midi'),(SELECT id FROM viandes WHERE nom LIKE '"+reponse+"'));";
                 // var query = "INSERT INTO viandes VALUES (" + ((await id_max()) + 1) + "," + "'"+nom+"'" + ")";
                 await conn.query(query)
             } catch (err) {
@@ -210,7 +208,7 @@ async function verification_de_la_presence_du_nom_de_la_viande_dans_la_bdd_table
     try {
         conn = await pool.getConnection();
         console.log("req_nom = " + req_nom);
-        var query = "select r.id_viandes AS VIANDES FROM `repas du jour` r INNER JOIN `viandes` v ON v.id = r.id_viandes INNER JOIN `jours` j ON j.id = r.id_jours WHERE j.nom LIKE 'Lundi' AND r.id_viandes LIKE ( SELECT v.id FROM viandes v WHERE v.nom LIKE '"+req_nom+"')";
+        var query = "select r.id_viandes AS VIANDES FROM `repas du jour` r INNER JOIN `viandes` v ON v.id = r.id_viandes INNER JOIN `jours` j ON j.id = r.id_jours WHERE j.nom LIKE 'DimancheMidi' AND r.id_viandes LIKE ( SELECT v.id FROM viandes v WHERE v.nom LIKE '"+req_nom+"')";
         var bdd_nom = await conn.query(query);
         // console.log("bdd_nom[0] = " + bdd_nom[0].VIANDES);
         if(typeof bdd_nom[0] != "undefined"){
@@ -233,7 +231,7 @@ async function verification_de_la_presence_du_nom_de_la_viande_dans_la_bdd_table
 
 
 module.exports = {
-    afficherRepasDuJourLundi, 
+    afficherRepasDuJourDimancheMidi, 
     ajouterRepasduJourDansViandes,
-    supprimerRepasDuJourLundi
+    supprimerRepasDuJourDimancheMidi
 };

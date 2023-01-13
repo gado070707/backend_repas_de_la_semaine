@@ -1,9 +1,9 @@
 var express = require('express');
 var router = express.Router();
-const { afficherRepasDuJourMercredi, ajouterRepasduJourDansViandes, supprimerRepasDuJourMercredi } = require('../controller/controllerRepasDuJourMercredi')
+const { afficherRepasDuJourSamediMidi, ajouterRepasduJourDansViandes, supprimerRepasDuJourSamediMidi } = require('../controller/controllerRepasDuJourSamediMidi')
 
-router.get('/', afficherRepasDuJourMercredi);
+router.get('/', afficherRepasDuJourSamediMidi);
 router.post('/ajouter', ajouterRepasduJourDansViandes);
-router.delete('/supprimer', supprimerRepasDuJourMercredi);
+router.delete('/supprimer', supprimerRepasDuJourSamediMidi);
 
 module.exports = router;
