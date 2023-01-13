@@ -5,7 +5,7 @@ const afficherRepasDuJourSamediMidi = (async function (req, res, next){
   conn;
   try {
       conn = await pool.getConnection();
-      var query = "select v.nom AS VIANDES FROM `repas du jour` r INNER JOIN `viandes` v ON v.id = r.id_viandes INNER JOIN `jours` j ON j.id = r.id_jours WHERE j.nom LIKE 'SamediMidi'";
+      var query = "select v.nom AS VIANDES FROM `repas du jour` r INNER JOIN `viandes` v ON v.id = r.id_viandes INNER JOIN `jours` j ON j.id = r.id_jours WHERE j.nom LIKE 'Samedi midi'";
       var rows = await conn.query(query);
       res.send(rows);
   } catch (err) {
@@ -208,7 +208,7 @@ async function verification_de_la_presence_du_nom_de_la_viande_dans_la_bdd_table
     try {
         conn = await pool.getConnection();
         console.log("req_nom = " + req_nom);
-        var query = "select r.id_viandes AS VIANDES FROM `repas du jour` r INNER JOIN `viandes` v ON v.id = r.id_viandes INNER JOIN `jours` j ON j.id = r.id_jours WHERE j.nom LIKE 'SamediMidi' AND r.id_viandes LIKE ( SELECT v.id FROM viandes v WHERE v.nom LIKE '"+req_nom+"')";
+        var query = "select r.id_viandes AS VIANDES FROM `repas du jour` r INNER JOIN `viandes` v ON v.id = r.id_viandes INNER JOIN `jours` j ON j.id = r.id_jours WHERE j.nom LIKE 'Samedi midi' AND r.id_viandes LIKE ( SELECT v.id FROM viandes v WHERE v.nom LIKE '"+req_nom+"')";
         var bdd_nom = await conn.query(query);
         // console.log("bdd_nom[0] = " + bdd_nom[0].VIANDES);
         if(typeof bdd_nom[0] != "undefined"){
