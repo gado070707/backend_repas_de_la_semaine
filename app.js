@@ -1,15 +1,42 @@
 var createError = require('http-errors');
-var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+const express = require("express");
+const helmet = require("helmet");
+
+const app = express();
+
 require("dotenv").config();
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/routerUsers');
 var viandesRouter = require('./routes/routerViandes');
 var repasdujourRouter = require('./routes/routerRepasDuJour');
-var app = express();
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+app.use(helmet());
+// By default, Helmet sets the following headers:
+// Content-Security-Policy: default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests
+// Cross-Origin-Embedder-Policy: require-corp
+// Cross-Origin-Opener-Policy: same-origin
+// Cross-Origin-Resource-Policy: same-origin
+// Origin-Agent-Cluster: ?1
+// Referrer-Policy: no-referrer
+// Strict-Transport-Security: max-age=15552000; includeSubDomains
+// X-Content-Type-Options: nosniff
+// X-DNS-Prefetch-Control: off
+// X-Download-Options: noopen
+// X-Frame-Options: SAMEORIGIN
+// X-Permitted-Cross-Domain-Policies: none
+// X-XSS-Protection: 0
+
+
+// This disables the `contentSecurityPolicy` middleware but keeps the rest.
+// app.use(
+//   helmet({
+//     contentSecurityPolicy: false,
+//   })
+// );
 
 const port = 8585
 
