@@ -3,7 +3,9 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "nodemon ./bin/www"
+    "start": "cd ../../ && docker-compose up --detach && cd back/backend_repas_de_la_semaine/ && nodemon ./bin/www",
+    "stop" : "cd ../../ && docker-compose down",
+    "restart" : "cd ../../ && docker-compose down && docker-compose up --detach && cd back/backend_repas_de_la_semaine/ && nodemon ./bin/www"
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",

@@ -2,14 +2,13 @@ version: '3.1'
 
 services:
   db:
-    image: mariadb:10.6
+    image: lscr.io/linuxserver/mariadb
     container_name: bdd
     hostname: bdd
     restart: unless-stopped
     # network_mode: bridge
     volumes:
-      - ./dossiers_de_configuration/bdd:/var/lib/mysql
-      - ./dossiers_de_configuration/conf:/etc/mysql
+      - ../dossiers_de_configuration/conf:/config
     environment:
       MYSQL_ROOT_PASSWORD: root
     networks:
