@@ -9,6 +9,7 @@ var routerRepasDuJourSamediMidi = require('./routerRepasDuJourSamediMidi');
 var routerRepasDuJourSamedi = require('./routerRepasDuJourSamedi');
 var routerRepasDuJourDimancheMidi = require('./routerRepasDuJourDimancheMidi');
 var routerRepasDuJourDimanche = require('./routerRepasDuJourDimanche');
+var routerHistoriqueRepasDesJours = require('./routerHistoriqueRepasDesJours');
 
 router.use('/lundi', routerRepasDuJourLundi);
 router.use('/mardi', routerRepasDuJourMardi);
@@ -19,5 +20,6 @@ router.use('/samedi_midi', routerRepasDuJourSamediMidi);
 router.use('/samedi', routerRepasDuJourSamedi);
 router.use('/dimanche_midi', routerRepasDuJourDimancheMidi);
 router.use('/dimanche', routerRepasDuJourDimanche);
+router.use('/historiquerepasdesjours', routerHistoriqueRepasDesJours);
 
 module.exports = router;
