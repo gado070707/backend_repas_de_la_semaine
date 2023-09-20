@@ -43,15 +43,14 @@ const supprimerRepasDuJourLundi = (async function (req, res, next){
     console.log("supprimer req.body.nom = " + req.body.nom);
 
     verification_de_la_presence_du_nom_de_la_viande_dans_la_bdd_table_repasdujour(req.body.nom).then(async function (id){
-        console.log("id = " + id);
+        // console.log("id = " + id);
         try {
             conn = await pool.getConnection();
             // var query = "DELETE FROM `repas du jour` WHERE id_viandes = ( SELECT id FROM viandes WHERE nom LIKE '" + req.body.nom + "'";
             var query = "DELETE FROM `repas du jour` WHERE id_viandes = " + id;
-            console.log("query = " + query);
             var rows = await conn.query(query);
-            console.log("typeof rows[0] = " + typeof rows[0]);
-            console.log(rows[0]);
+            // console.log("typeof rows[0] = " + typeof rows[0]);
+            // console.log(rows[0]);
             if((typeof rows[0]) != "undefined"){
                 res.status(200).json({ message: "La viande a été supprimée correctement"});
             }
@@ -84,16 +83,17 @@ const ajouterRepasduJourDansViandes = ( async function(req, res, next) {
         verification_de_la_presence_du_nom_de_la_viande_dans_la_table_viandes(req.body.nom).then(function (nom_bdd) { 
             console.log(nom_bdd + " VS " + req.body.nom);
             if (nom_bdd == req.body.nom) {
-                ajouterRepasDuJourLundi(req.body.nom);
-                return res.status(200).json({ error: 'La repas sera ajouté à lundi' });
-                // return res.status(409).json({ error: 'La repas sera ajouté à lundi' });
-                // return 90;
+                // ajouterRepasDuJourLundi(req.body.nom);
+                console.warn("La viande " + req.body.nom + " ne peut pas être ajouté car elle existe déjà");
+                return res.status(200).json({ message: "La viande " + req.body.nom + " ne peut pas être ajouté car elle existe déjà",
+                                              nom: req.body.nom });
             }
             else{
                 nom_de_viande_a_ajouter(req.body.nom).then(()=>{
                     ajouterRepasDuJourLundi(req.body.nom);
                 });
-                res.status(200).json({ message: "La viande a été ajoutée correctement"});
+                res.status(200).json({ message: "La viande \"" + req.body.nom + "\" a été ajoutée correctement",
+                                       nom : req.body.nom});
             }
         });
     });
@@ -120,7 +120,7 @@ async function ajouterRepasDuJourLundi(reponse){
             }
         }
         else{
-            console.log("SINON data = " + data);
+            console.log("SINON data = " + data); // data correspond à l'ID
             return null;
         }
     });
@@ -212,8 +212,8 @@ async function verification_de_la_presence_du_nom_de_la_viande_dans_la_bdd_table
         var bdd_nom = await conn.query(query);
         // console.log("bdd_nom[0] = " + bdd_nom[0].VIANDES);
         if(typeof bdd_nom[0] != "undefined"){
-            console.log("SI = " + bdd_nom[0].VIANDES);
-            return bdd_nom[0].VIANDES;
+            console.log("SI = " + bdd_nom[0].VIANDES); 
+            return bdd_nom[0].VIANDES; // retourne l'ID
         }
         else{
             console.log("SINON = " + bdd_nom[0]);

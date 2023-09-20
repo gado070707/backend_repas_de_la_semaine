@@ -1,0 +1,1 @@
+// "start": "cd ../../ && docker-compose up --detach && cd back/backend_repas_de_la_semaine/ && nodemon ./bin/www",
