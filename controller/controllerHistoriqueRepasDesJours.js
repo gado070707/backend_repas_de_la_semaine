@@ -37,8 +37,8 @@ const recuperationDeLaDate = (async function (req, res, next) {
     // console.log("mercredi : " + mercredi);
     // console.log("jeudi : " + jeudi);
     // console.log("vendredi : " + vendredi);
-    // console.log("samedi = " + samedi);
-    // console.log("dimanche = " + dimanche);
+    console.log("samedi = " + samedi);
+    console.log("dimanche = " + dimanche);
 
     // console.log("nouvelleDate = " + nouvelleDate);
     // const query = "SELECT * FROM historiquerepasdesjours WHERE datedujour LIKE '?'";
@@ -83,6 +83,51 @@ const recuperationDeLaDate = (async function (req, res, next) {
     }
 });
 
+
+const ajoutDesRepasDeLaSemaine = (async function (req, res, next) {
+    const lundi = recuperationDeLEnsembleDesJoursDeLaSemaineFormater(req.body.date_lundi);
+    const mardi = recuperationDeLEnsembleDesJoursDeLaSemaineFormater(req.body.date_mardi);
+    const mercredi = recuperationDeLEnsembleDesJoursDeLaSemaineFormater(req.body.date_mercredi);
+    const jeudi = recuperationDeLEnsembleDesJoursDeLaSemaineFormater(req.body.date_jeudi);
+    const vendredi = recuperationDeLEnsembleDesJoursDeLaSemaineFormater(req.body.date_vendredi);
+    const samedi = recuperationDeLEnsembleDesJoursDeLaSemaineFormater(req.body.date_samedi);
+    let dimanche = recuperationDeLEnsembleDesJoursDeLaSemaineFormater(req.body.date_dimanche);
+    
+    
+    console.log(req.body.date_dimanche);
+    console.log(req.body.repas_dimanche);
+    // dimanche.dimanche.setDate(dimanche.dimanche.getDate() - 7);
+    console.log("Date dimanche = " + dimanche.dimanche );
+    // res.json({ message: "Aucun enregistrement trouvé",
+    //            requete: req.body });
+
+    let query = "INSERT INTO `historiquerepasdesjours`(`id_viande`, `datedujour`, `dejeuner`, `diner`)";
+    query += " VALUES ((SELECT v.id FROM `viandes` v WHERE v.nom LIKE '" + req.body.repas_lundi + "'),'" + lundi.lundi + "', '1', '0'),";
+    query += " ((SELECT v.id FROM `viandes` v WHERE v.nom LIKE '" + req.body.repas_mardi + "'),'" + mardi.mardi + "', '1', '0'),";
+    query += " ((SELECT v.id FROM `viandes` v WHERE v.nom LIKE '" + req.body.repas_mercredi + "'),'" + mercredi.mercredi + "', '1', '0'),";
+    query += " ((SELECT v.id FROM `viandes` v WHERE v.nom LIKE '" + req.body.repas_jeudi + "'),'" + jeudi.jeudi + "', '1', '0'),";
+    query += " ((SELECT v.id FROM `viandes` v WHERE v.nom LIKE '" + req.body.repas_vendredi + "'),'" + vendredi.vendredi + "', '1', '0'),";
+    query += " ((SELECT v.id FROM `viandes` v WHERE v.nom LIKE '" + req.body.repas_samedi_midi + "'),'" + samedi.samedi + "', '0', '1'),";
+    query += " ((SELECT v.id FROM `viandes` v WHERE v.nom LIKE '" + req.body.repas_samedi + "'),'" + samedi.samedi + "', '1', '0'),";
+    query += " ((SELECT v.id FROM `viandes` v WHERE v.nom LIKE '" + req.body.repas_dimanche_midi + "'),DATE_SUB('" + dimanche.dimanche + "',INTERVAL 7 DAY), '0', '1'),";
+    query += " ((SELECT v.id FROM `viandes` v WHERE v.nom LIKE '" + req.body.repas_dimanche + "'),DATE_SUB('" + dimanche.dimanche + "',INTERVAL 7 DAY), '1', '0')";
+    let conn;
+    try {
+        conn = await pool.getConnection();
+        const retourDInformation = await conn.query(query);
+        console.log("retourDInformation = " + retourDInformation);
+        res.json({
+            message: "Les repas ont été insérés"
+        });
+    } catch (err) {
+        console.log(err);
+        console.error(err);
+        throw err;
+    } finally {
+        if (conn) return conn.release();
+
+    }
+});
 
 
 function envoyerLaSemaine() {
@@ -198,5 +243,6 @@ function recuperationDeLEnsembleDesJoursDeLaSemaineFormater(date) {
 
 module.exports = {
     afficherLesRepasDeLaSemaine,
-    recuperationDeLaDate
+    recuperationDeLaDate,
+    ajoutDesRepasDeLaSemaine
 };

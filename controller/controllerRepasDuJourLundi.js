@@ -86,14 +86,16 @@ const ajouterRepasduJourDansViandes = ( async function(req, res, next) {
                 // ajouterRepasDuJourLundi(req.body.nom);
                 console.warn("La viande " + req.body.nom + " ne peut pas être ajouté car elle existe déjà");
                 return res.status(200).json({ message: "La viande " + req.body.nom + " ne peut pas être ajouté car elle existe déjà",
-                                              nom: req.body.nom });
+                                              nom: req.body.nom,
+                                              presence: 1 });
             }
             else{
                 nom_de_viande_a_ajouter(req.body.nom).then(()=>{
                     ajouterRepasDuJourLundi(req.body.nom);
                 });
                 res.status(200).json({ message: "La viande \"" + req.body.nom + "\" a été ajoutée correctement",
-                                       nom : req.body.nom});
+                                       nom: req.body.nom,
+                                       presence: 0});
             }
         });
     });
