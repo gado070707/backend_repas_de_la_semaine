@@ -83,7 +83,7 @@ const ajouterRepasduJourDansViandes = ( async function(req, res, next) {
         verification_de_la_presence_du_nom_de_la_viande_dans_la_table_viandes(req.body.nom).then(function (nom_bdd) { 
             console.log(nom_bdd + " VS " + req.body.nom);
             if (nom_bdd == req.body.nom) {
-                // ajouterRepasDuJourVendredi(req.body.nom);
+                ajouterRepasDuJourVendredi(req.body.nom);
                 console.warn("La viande " + req.body.nom + " ne peut pas être ajouté car elle existe déjà");
                 return res.status(200).json({ message: "La viande " + req.body.nom + " ne peut pas être ajouté car elle existe déjà",
                                               nom: req.body.nom,
@@ -104,12 +104,12 @@ const ajouterRepasduJourDansViandes = ( async function(req, res, next) {
 
 
 async function ajouterRepasDuJourVendredi(reponse){
-    console.log(" reponse : " + reponse);
+    console.log(" reponse :: " + reponse);
     verification_de_la_presence_du_nom_de_la_viande_dans_la_bdd_table_repasdujour(reponse).then(async function(data) {
-        // console.log("data = " +  data);
+        console.log("data :: " +  data);
         // console.log("typeof data = " + typeof data);
         if(data == null){
-            console.log("data = " + data);
+            console.log("data ::: " + data);
             try {
                 conn = await pool.getConnection();
                 var query = "INSERT INTO `repas du jour`(`id_jours`, `id_viandes`) VALUES ((SELECT id FROM jours WHERE nom = 'Vendredi'),(SELECT id FROM viandes WHERE nom LIKE '"+reponse+"'));";
@@ -218,7 +218,7 @@ async function verification_de_la_presence_du_nom_de_la_viande_dans_la_bdd_table
             return bdd_nom[0].VIANDES; // retourne l'ID
         }
         else{
-            console.log("SINON = " + bdd_nom[0]);
+            console.log("SINON ::: " + bdd_nom[0]);
             return null;
         }
         
