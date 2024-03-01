@@ -461,3 +461,53 @@ Version: '10.5.17-MariaDB-log'  socket: '/run/mysqld/mysqld.sock'  port: 3306  M
 2024-03-01 13:58:41 0 [ERROR] mariadbd: File '/config/log/mysql/mariadb-bin.state' not found (Errcode: 13 "Permission denied")
 2024-03-01 13:58:41 0 [ERROR] Error writing binlog state to file '/config/log/mysql/mariadb-bin.state'.
 2024-03-01 13:58:41 0 [ERROR] Failed to save binlog GTID state during shutdown. Binlog will be marked as crashed, so that crash recovery can recover the state at next server startup.
+240301 14:24:06 mysqld_safe Starting mariadbd daemon with databases from /config/databases
+2024-03-01 14:24:11 0 [Note] /usr/bin/mariadbd (mysqld 10.5.17-MariaDB-log) starting as process 325 ...
+2024-03-01 14:24:12 0 [Note] InnoDB: Uses event mutexes
+2024-03-01 14:24:12 0 [Note] InnoDB: Compressed tables use zlib 1.2.12
+2024-03-01 14:24:12 0 [Note] InnoDB: Number of pools: 1
+2024-03-01 14:24:12 0 [Note] InnoDB: Using generic crc32 instructions
+2024-03-01 14:24:12 0 [Note] mariadbd: O_TMPFILE is not supported on /var/tmp (disabling future attempts)
+2024-03-01 14:24:12 0 [Note] InnoDB: Using Linux native AIO
+2024-03-01 14:24:12 0 [Note] InnoDB: Initializing buffer pool, total size = 268435456, chunk size = 134217728
+2024-03-01 14:24:12 0 [Note] InnoDB: Completed initialization of buffer pool
+2024-03-01 14:24:12 0 [Note] InnoDB: Starting crash recovery from checkpoint LSN=939026,939026
+2024-03-01 14:24:15 0 [Note] InnoDB: Starting final batch to recover 1 pages from redo log.
+2024-03-01 14:24:15 0 [Note] InnoDB: Last binlog file '/config/log/mysql/mariadb-bin.000015', position 631
+2024-03-01 14:24:15 0 [Note] InnoDB: 128 rollback segments are active.
+2024-03-01 14:24:15 0 [Note] InnoDB: Removed temporary tablespace data file: "ibtmp1"
+2024-03-01 14:24:15 0 [Note] InnoDB: Creating shared tablespace for temporary tables
+2024-03-01 14:24:15 0 [Note] InnoDB: Setting file './ibtmp1' size to 12 MB. Physically writing the file full; Please wait ...
+2024-03-01 14:24:15 0 [Note] InnoDB: File './ibtmp1' size is now 12 MB.
+2024-03-01 14:24:15 0 [Note] InnoDB: 10.5.17 started; log sequence number 939285; transaction id 1005
+2024-03-01 14:24:15 0 [Note] InnoDB: Loading buffer pool(s) from /config/databases/ib_buffer_pool
+2024-03-01 14:24:15 0 [Note] Plugin 'FEEDBACK' is disabled.
+2024-03-01 14:24:16 0 [Note] Recovering after a crash using /config/log/mysql/mariadb-bin
+2024-03-01 14:24:16 0 [Note] Starting crash recovery...
+2024-03-01 14:24:16 0 [Note] Crash recovery finished.
+2024-03-01 14:24:17 0 [Note] Server socket created on IP: '::'.
+2024-03-01 14:24:17 0 [Note] InnoDB: Buffer pool(s) load completed at 240301 14:24:17
+2024-03-01 14:24:18 0 [Note] Reading of all Master_info entries succeeded
+2024-03-01 14:24:18 0 [Note] Added new Master_info '' to hash table
+2024-03-01 14:24:18 0 [Note] /usr/bin/mariadbd: ready for connections.
+Version: '10.5.17-MariaDB-log'  socket: '/run/mysqld/mysqld.sock'  port: 3306  MariaDB Server
+2024-03-01 14:34:24 4 [Warning] Aborted connection 4 to db: 'repas' user: 'root' host: 'app_back.home_repas_de_la_semaine_repas' (Got timeout reading communication packets)
+2024-03-01 14:34:24 5 [Warning] Aborted connection 5 to db: 'repas' user: 'root' host: 'app_back.home_repas_de_la_semaine_repas' (Got timeout reading communication packets)
+2024-03-01 14:34:24 8 [Warning] Aborted connection 8 to db: 'repas' user: 'root' host: 'app_back.home_repas_de_la_semaine_repas' (Got timeout reading communication packets)
+2024-03-01 14:34:24 11 [Warning] Aborted connection 11 to db: 'repas' user: 'root' host: 'app_back.home_repas_de_la_semaine_repas' (Got timeout reading communication packets)
+2024-03-01 14:34:24 6 [Warning] Aborted connection 6 to db: 'repas' user: 'root' host: 'app_back.home_repas_de_la_semaine_repas' (Got timeout reading communication packets)
+2024-03-01 14:34:24 9 [Warning] Aborted connection 9 to db: 'repas' user: 'root' host: 'app_back.home_repas_de_la_semaine_repas' (Got timeout reading communication packets)
+2024-03-01 14:34:24 7 [Warning] Aborted connection 7 to db: 'repas' user: 'root' host: 'app_back.home_repas_de_la_semaine_repas' (Got timeout reading communication packets)
+2024-03-01 14:34:24 10 [Warning] Aborted connection 10 to db: 'repas' user: 'root' host: 'app_back.home_repas_de_la_semaine_repas' (Got timeout reading communication packets)
+2024-03-01 14:34:24 12 [Warning] Aborted connection 12 to db: 'repas' user: 'root' host: 'app_back.home_repas_de_la_semaine_repas' (Got timeout reading communication packets)
+2024-03-01 14:34:24 13 [Warning] Aborted connection 13 to db: 'repas' user: 'root' host: 'app_back.home_repas_de_la_semaine_repas' (Got timeout reading communication packets)
+2024-03-01 14:44:24 14 [Warning] Aborted connection 14 to db: 'repas' user: 'root' host: 'app_back.home_repas_de_la_semaine_repas' (Got timeout reading communication packets)
+2024-03-01 14:44:25 22 [Warning] Aborted connection 22 to db: 'repas' user: 'root' host: 'app_back.home_repas_de_la_semaine_repas' (Got timeout reading communication packets)
+2024-03-01 14:44:25 16 [Warning] Aborted connection 16 to db: 'repas' user: 'root' host: 'app_back.home_repas_de_la_semaine_repas' (Got timeout reading communication packets)
+2024-03-01 14:44:25 17 [Warning] Aborted connection 17 to db: 'repas' user: 'root' host: 'app_back.home_repas_de_la_semaine_repas' (Got timeout reading communication packets)
+2024-03-01 14:44:25 21 [Warning] Aborted connection 21 to db: 'repas' user: 'root' host: 'app_back.home_repas_de_la_semaine_repas' (Got timeout reading communication packets)
+2024-03-01 14:44:25 20 [Warning] Aborted connection 20 to db: 'repas' user: 'root' host: 'app_back.home_repas_de_la_semaine_repas' (Got timeout reading communication packets)
+2024-03-01 14:44:25 15 [Warning] Aborted connection 15 to db: 'repas' user: 'root' host: 'app_back.home_repas_de_la_semaine_repas' (Got timeout reading communication packets)
+2024-03-01 14:44:25 18 [Warning] Aborted connection 18 to db: 'repas' user: 'root' host: 'app_back.home_repas_de_la_semaine_repas' (Got timeout reading communication packets)
+2024-03-01 14:44:25 19 [Warning] Aborted connection 19 to db: 'repas' user: 'root' host: 'app_back.home_repas_de_la_semaine_repas' (Got timeout reading communication packets)
+2024-03-01 14:44:25 23 [Warning] Aborted connection 23 to db: 'repas' user: 'root' host: 'app_back.home_repas_de_la_semaine_repas' (Got timeout reading communication packets)

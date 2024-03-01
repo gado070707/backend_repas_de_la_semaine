@@ -4,6 +4,7 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const express = require("express");
 const helmet = require("helmet");
+const process = require('process');
 
 const app = express();
 
@@ -14,6 +15,8 @@ var usersRouter = require('./routes/routerUsers');
 var viandesRouter = require('./routes/routerViandes');
 var repasdujourRouter = require('./routes/routerRepasDuJour');
 var historiqueRepasDesJoursRouter = require('./routes/routerHistoriqueRepasDesJours');
+
+const port = process.env.PORT_BACK;
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 app.use(helmet());
 // By default, Helmet sets the following headers:
@@ -46,7 +49,7 @@ app.use((req, res, next) => {
   next();
 });
 
-const port = 8585
+
 
 // import { vue_viandes } from "./controller/read";
 
