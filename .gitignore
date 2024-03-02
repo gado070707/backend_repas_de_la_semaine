@@ -104,4 +104,6 @@ dist
 .tern-port
 
 #docker/dossiers_de_configuration/conf/
+conf/bdd/databases/
+conf/bdd/log/
 nohup.out
