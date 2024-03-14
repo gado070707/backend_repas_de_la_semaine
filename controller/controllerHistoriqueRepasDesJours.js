@@ -102,15 +102,15 @@ const ajoutDesRepasDeLaSemaine = (async function (req, res, next) {
     //            requete: req.body });
 
     let query = "INSERT INTO `historiquerepasdesjours`(`id_viande`, `datedujour`, `dejeuner`, `diner`)";
-    query += " VALUES ((SELECT v.id FROM `viandes` v WHERE v.nom LIKE '" + req.body.repas_lundi + "'),'" + lundi.lundi + "', '1', '0'),";
-    query += " ((SELECT v.id FROM `viandes` v WHERE v.nom LIKE '" + req.body.repas_mardi + "'),'" + mardi.mardi + "', '1', '0'),";
-    query += " ((SELECT v.id FROM `viandes` v WHERE v.nom LIKE '" + req.body.repas_mercredi + "'),'" + mercredi.mercredi + "', '1', '0'),";
-    query += " ((SELECT v.id FROM `viandes` v WHERE v.nom LIKE '" + req.body.repas_jeudi + "'),'" + jeudi.jeudi + "', '1', '0'),";
-    query += " ((SELECT v.id FROM `viandes` v WHERE v.nom LIKE '" + req.body.repas_vendredi + "'),'" + vendredi.vendredi + "', '1', '0'),";
-    query += " ((SELECT v.id FROM `viandes` v WHERE v.nom LIKE '" + req.body.repas_samedi_midi + "'),'" + samedi.samedi + "', '0', '1'),";
-    query += " ((SELECT v.id FROM `viandes` v WHERE v.nom LIKE '" + req.body.repas_samedi + "'),'" + samedi.samedi + "', '1', '0'),";
-    query += " ((SELECT v.id FROM `viandes` v WHERE v.nom LIKE '" + req.body.repas_dimanche_midi + "'),DATE_SUB('" + dimanche.dimanche + "',INTERVAL 7 DAY), '0', '1'),";
-    query += " ((SELECT v.id FROM `viandes` v WHERE v.nom LIKE '" + req.body.repas_dimanche + "'),DATE_SUB('" + dimanche.dimanche + "',INTERVAL 7 DAY), '1', '0')";
+    query += " VALUES ((SELECT MAX(v.id) FROM `viandes` v WHERE v.nom = '" + req.body.repas_lundi + "'),'" + lundi.lundi + "', '1', '0'),";
+    query += " ((SELECT MAX(v.id) FROM `viandes` v WHERE v.nom = '" + req.body.repas_mardi + "'),'" + mardi.mardi + "', '1', '0'),";
+    query += " ((SELECT MAX(v.id) FROM `viandes` v WHERE v.nom = '" + req.body.repas_mercredi + "'),'" + mercredi.mercredi + "', '1', '0'),";
+    query += " ((SELECT MAX(v.id) FROM `viandes` v WHERE v.nom = '" + req.body.repas_jeudi + "'),'" + jeudi.jeudi + "', '1', '0'),";
+    query += " ((SELECT MAX(v.id) FROM `viandes` v WHERE v.nom = '" + req.body.repas_vendredi + "'),'" + vendredi.vendredi + "', '1', '0'),";
+    query += " ((SELECT MAX(v.id) FROM `viandes` v WHERE v.nom = '" + req.body.repas_samedi_midi + "'),'" + samedi.samedi + "', '0', '1'),";
+    query += " ((SELECT MAX(v.id) FROM `viandes` v WHERE v.nom = '" + req.body.repas_samedi + "'),'" + samedi.samedi + "', '1', '0'),";
+    query += " ((SELECT MAX(v.id) FROM `viandes` v WHERE v.nom = '" + req.body.repas_dimanche_midi + "'),DATE_SUB('" + dimanche.dimanche + "',INTERVAL 7 DAY), '0', '1'),";
+    query += " ((SELECT MAX(v.id) FROM `viandes` v WHERE v.nom = '" + req.body.repas_dimanche + "'),DATE_SUB('" + dimanche.dimanche + "',INTERVAL 7 DAY), '1', '0')";
     let conn;
     try {
         conn = await pool.getConnection();
