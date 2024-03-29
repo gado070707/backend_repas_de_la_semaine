@@ -1,0 +1,49 @@
+ M bin/www
+ D conf/bdd/bdd.js
+ M conf/bdd/custom.cnf
+ M conf/bdd/databases/aria_log.00000001
+ M conf/bdd/databases/aria_log_control
+ M conf/bdd/databases/bdd.err
+ M conf/bdd/databases/ib_buffer_pool
+ M conf/bdd/databases/ib_logfile0
+ M conf/bdd/databases/ibdata1
+ M conf/bdd/databases/ibtmp1
+ M conf/bdd/databases/multi-master.info
+ M conf/bdd/log/mysql/mariadb-bin.000001
+ M conf/bdd/log/mysql/mariadb-bin.000002
+ M conf/bdd/log/mysql/mariadb-bin.000003
+ M conf/bdd/log/mysql/mariadb-bin.000004
+ M conf/bdd/log/mysql/mariadb-bin.000005
+ M conf/bdd/log/mysql/mariadb-bin.000006
+ M conf/bdd/log/mysql/mariadb-bin.000007
+ M conf/bdd/log/mysql/mariadb-bin.000008
+ M conf/bdd/log/mysql/mariadb-bin.000009
+ M conf/bdd/log/mysql/mariadb-bin.000010
+ M conf/bdd/log/mysql/mariadb-bin.000011
+ M conf/bdd/log/mysql/mariadb-bin.000012
+ D conf/bdd/log/mysql/mariadb-bin.000013
+ D conf/bdd/log/mysql/mariadb-bin.000014
+ D conf/bdd/log/mysql/mariadb-bin.000015
+ D conf/bdd/log/mysql/mariadb-bin.000016
+ M conf/bdd/log/mysql/mariadb-bin.index
+ M controller/controllerHistoriqueRepasDesJours.js
+ M controller/controllerRepasDuJourDimanche.js
+ M controller/controllerRepasDuJourDimancheMidi.js
+ M controller/controllerRepasDuJourJeudi.js
+ M controller/controllerRepasDuJourLundi.js
+ M controller/controllerRepasDuJourMardi.js
+ M controller/controllerRepasDuJourMercredi.js
+ M controller/controllerRepasDuJourSamedi.js
+ M controller/controllerRepasDuJourSamediMidi.js
+ M controller/controllerRepasDuJourVendredi.js
+ M controller/controllerViandes.js
+ M package.json
+?? conf/bdd.js
+?? conf/bdd/aria_log.00000001
+?? conf/bdd/aria_log_control
+?? conf/bdd/ib_buffer_pool
+?? conf/bdd/ib_logfile0
+?? conf/bdd/ibdata1
+?? conf/bdd/multi-master.info
+?? conf/bdd/mysql_upgrade_info
+?? test.txt

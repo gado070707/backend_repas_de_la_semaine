@@ -1,4 +1,4 @@
-const pool = require('../conf/bdd/bdd')
+const pool = require('../conf/bdd')
 
 const afficherRepasDuJourMardi = (async function (req, res, next){    
   let conn;
@@ -210,7 +210,7 @@ async function verification_de_la_presence_du_nom_de_la_viande_dans_la_bdd_table
     try {
         conn = await pool.getConnection();
         console.log("req_nom = " + req_nom);
-        var query = "select r.id_viandes AS VIANDES FROM `repas du jour` r INNER JOIN `viandes` v ON v.id = r.id_viandes INNER JOIN `jours` j ON j.id = r.id_jours WHERE j.nom LIKE 'Mardi' AND r.id_viandes LIKE ( SELECT v.id FROM viandes v WHERE v.nom LIKE '"+req_nom+"')";
+        var query = "select r.id_viandes AS VIANDES FROM `repas du jour` r INNER JOIN `viandes` v ON v.id = r.id_viandes INNER JOIN `jours` j ON j.id = r.id_jours WHERE j.nom LIKE 'Mardi' AND r.id_viandes in ( SELECT v.id FROM viandes v WHERE v.nom LIKE '"+req_nom+"')";
         var bdd_nom = await conn.query(query);
         // console.log("bdd_nom[0] = " + bdd_nom[0].VIANDES);
         if(typeof bdd_nom[0] != "undefined"){

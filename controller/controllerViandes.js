@@ -1,4 +1,4 @@
-const pool = require('../conf/bdd/bdd')
+const pool = require('../conf/bdd')
 
 const afficherViandes = (async function (req, res, next){    
   let conn;
