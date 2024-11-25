@@ -1,5 +1,7 @@
 const pool = require('../conf/bdd')
 
+
+
 const afficherLesRepasDeLaSemaine = (async function (req, res, next) {
     let conn;
     try {
@@ -14,7 +16,7 @@ const afficherLesRepasDeLaSemaine = (async function (req, res, next) {
         // const query6 = "END AS MOMENT FROM `historiquerepasdesjours` h LEFT JOIN `viandes` v ON v.id = h.id_viande LEFT JOIN `repas du jour` r ON r.id_viandes = v.id";
         // var query = query1 + query2 + query3 + query4 + query5 + query6;
 
-        const query = "SELECT v.nom, h.datedujour, CASE WHEN h.dejeuner = 1 THEN 'Déjeuner' WHEN h.diner = 1 THEN 'Dîner' ELSE 'KO' END AS MOMENT FROM `historiquerepasdesjours` h LEFT JOIN `viandes` v ON v.id = h.id_viande LEFT JOIN `repas du jour` r ON r.id_viandes = v.id";
+        const query = "SELECT v.nom, h.datedujour, CASE WHEN h.id_moment = 2 THEN 'Déjeuner' WHEN h.id_moment = 3 THEN 'Dîner' ELSE 'KO' END AS MOMENT FROM `historiquerepasdesjours` h LEFT JOIN `viandes` v ON v.id = h.id_viande LEFT JOIN `repas du jour` r ON r.id_viande = v.id";
         var rows = await conn.query(query);
         res.send(rows);
     } catch (err) {
@@ -54,7 +56,7 @@ const recuperationDeLaDate = (async function (req, res, next) {
         // console.log("nouvelleDate2 = " + nouvelleDate2);
         // console.log("nombreDEnregistrement.length = " + [nombreDEnregistrement].length);
         if ([nombreDEnregistrement].length > 0) {
-            const query2 = "SELECT v.nom, h.datedujour, CASE WHEN h.dejeuner = 1 THEN 'Déjeuner' WHEN h.diner = 1 THEN 'Dîner' ELSE 'KO' END AS MOMENT FROM `historiquerepasdesjours` h LEFT JOIN `viandes` v ON v.id = h.id_viande LEFT JOIN `repas du jour` r ON r.id_viandes = v.id WHERE h.datedujour BETWEEN DATE_FORMAT('" + lundi + "', '%Y-%m-%d') AND DATE_FORMAT('" + dimanche + "', '%Y-%m-%d') ORDER BY h.datedujour ASC";
+            const query2 = "SELECT v.nom, h.datedujour, CASE WHEN h.id_moment = 2 THEN 'Déjeuner' WHEN h.id_moment = 3 THEN 'Dîner' ELSE 'KO' END AS MOMENT FROM `historiquerepasdesjours` h LEFT JOIN `viandes` v ON v.id = h.id_viande LEFT JOIN `repas du jour` r ON r.id_viande = v.id WHERE h.datedujour BETWEEN DATE_FORMAT('" + lundi + "', '%Y-%m-%d') AND DATE_FORMAT('" + dimanche + "', '%Y-%m-%d') ORDER BY h.datedujour ASC";
             // const query2 = "SELECT h.datedujour FROM `historiquerepasdesjours` h LEFT JOIN `viandes` v ON v.id = h.id_viande LEFT JOIN `repas du jour` r ON r.id_viandes = v.id WHERE h.datedujour BETWEEN DATE_FORMAT('" + lundi + "', '%d/%m/%Y à %H:%i:%s') AND DATE_FORMAT('" + dimanche + "', '%d/%m/%Y à %H:%i:%s') ORDER BY h.datedujour ASC";
             // const options = { timeZone: 'Europe/Paris' };
             // const lundi_ = lundi.toLocaleString('fr-FR', options);
@@ -101,16 +103,16 @@ const ajoutDesRepasDeLaSemaine = (async function (req, res, next) {
     // res.json({ message: "Aucun enregistrement trouvé",
     //            requete: req.body });
 
-    let query = "INSERT INTO `historiquerepasdesjours`(`id_viande`, `datedujour`, `dejeuner`, `diner`)";
-    query += " VALUES ((SELECT MAX(v.id) FROM `viandes` v WHERE v.nom = '" + req.body.repas_lundi + "'),'" + lundi.lundi + "', '1', '0'),";
-    query += " ((SELECT MAX(v.id) FROM `viandes` v WHERE v.nom = '" + req.body.repas_mardi + "'),'" + mardi.mardi + "', '1', '0'),";
-    query += " ((SELECT MAX(v.id) FROM `viandes` v WHERE v.nom = '" + req.body.repas_mercredi + "'),'" + mercredi.mercredi + "', '1', '0'),";
-    query += " ((SELECT MAX(v.id) FROM `viandes` v WHERE v.nom = '" + req.body.repas_jeudi + "'),'" + jeudi.jeudi + "', '1', '0'),";
-    query += " ((SELECT MAX(v.id) FROM `viandes` v WHERE v.nom = '" + req.body.repas_vendredi + "'),'" + vendredi.vendredi + "', '1', '0'),";
-    query += " ((SELECT MAX(v.id) FROM `viandes` v WHERE v.nom = '" + req.body.repas_samedi_midi + "'),'" + samedi.samedi + "', '0', '1'),";
-    query += " ((SELECT MAX(v.id) FROM `viandes` v WHERE v.nom = '" + req.body.repas_samedi + "'),'" + samedi.samedi + "', '1', '0'),";
-    query += " ((SELECT MAX(v.id) FROM `viandes` v WHERE v.nom = '" + req.body.repas_dimanche_midi + "'),DATE_SUB('" + dimanche.dimanche + "',INTERVAL 7 DAY), '0', '1'),";
-    query += " ((SELECT MAX(v.id) FROM `viandes` v WHERE v.nom = '" + req.body.repas_dimanche + "'),DATE_SUB('" + dimanche.dimanche + "',INTERVAL 7 DAY), '1', '0')";
+    let query = "INSERT INTO `historiquerepasdesjours`(`id_viande`, `datedujour`, `id_moment`)";
+    query += " VALUES ((SELECT MAX(v.id) FROM `viandes` v WHERE v.nom = '" + req.body.repas_lundi + "'),'" + lundi.lundi + "', '3'),";
+    query += " ((SELECT MAX(v.id) FROM `viandes` v WHERE v.nom = '" + req.body.repas_mardi + "'),'" + mardi.mardi + "', '3'),";
+    query += " ((SELECT MAX(v.id) FROM `viandes` v WHERE v.nom = '" + req.body.repas_mercredi + "'),'" + mercredi.mercredi + "', '3'),";
+    query += " ((SELECT MAX(v.id) FROM `viandes` v WHERE v.nom = '" + req.body.repas_jeudi + "'),'" + jeudi.jeudi + "', '3'),";
+    query += " ((SELECT MAX(v.id) FROM `viandes` v WHERE v.nom = '" + req.body.repas_vendredi + "'),'" + vendredi.vendredi + "', '3'),";
+    query += " ((SELECT MAX(v.id) FROM `viandes` v WHERE v.nom = '" + req.body.repas_samedi_midi + "'),'" + samedi.samedi + "', '2'),";
+    query += " ((SELECT MAX(v.id) FROM `viandes` v WHERE v.nom = '" + req.body.repas_samedi + "'),'" + samedi.samedi + "', '3'),";
+    query += " ((SELECT MAX(v.id) FROM `viandes` v WHERE v.nom = '" + req.body.repas_dimanche_midi + "'),DATE_SUB('" + dimanche.dimanche + "',INTERVAL 7 DAY), '2'),";
+    query += " ((SELECT MAX(v.id) FROM `viandes` v WHERE v.nom = '" + req.body.repas_dimanche + "'),DATE_SUB('" + dimanche.dimanche + "',INTERVAL 7 DAY), '3')";
     let conn;
     try {
         conn = await pool.getConnection();
