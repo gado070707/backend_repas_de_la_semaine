@@ -15,6 +15,7 @@ var usersRouter = require('./routes/routerUsers');
 var viandesRouter = require('./routes/routerViandes');
 var repasdujourRouter = require('./routes/routerRepasDuJour');
 var historiqueRepasDesJoursRouter = require('./routes/routerHistoriqueRepasDesJours');
+var modeRouter = require('./routes/routerModes');
 
 const port = process.env.PORT_BACKEND;
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -77,6 +78,7 @@ app.use('/users', usersRouter);
 app.use('/viandes', viandesRouter);
 app.use('/repasdujour', repasdujourRouter);
 app.use('/historiquerepasdesjours', historiqueRepasDesJoursRouter);
+app.use('/mode', modeRouter);
 
 
 // catch 404 and forward to error handler

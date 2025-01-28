@@ -46,7 +46,6 @@ const supprimerRepasDuJour = function (options) {
         console.log("supprimer req.body.nom = " + req.body.nom);
 
         verification_de_la_presence_du_nom_de_la_viande_dans_la_bdd_table_repasdujour(options, req.body.nom).then(async function (id){
-            // console.log("id = " + id);
             try {
                 conn = await pool.getConnection();
                 // var query = "DELETE FROM `repas du jour` WHERE id_viande = ( SELECT id FROM viandes WHERE nom LIKE '" + req.body.nom + "'";
@@ -64,7 +63,9 @@ const supprimerRepasDuJour = function (options) {
                         query += "AND id_moment in (2,3);";
                 }
                 else if (options.moment != null && options.jour != "semaine") {
-                    var query = "DELETE FROM `repas du jour` WHERE id_viande = " + id + " AND id_jour = '" + options.jour + "' AND id_moment = (SELECT id FROM moments WHERE nom = '" + options.moment + "');";
+                    console.log(id + " " + options.jour + " " + options.moment + " !");
+                    // var query = "DELETE FROM `repas du jour` WHERE id_viande = " + id + " AND id_jour = '" + options.jour + "' AND id_moment = (SELECT id FROM moments WHERE nom = '" + options.moment + "');";
+                    var query = "DELETE FROM `repas du jour` WHERE id_viande = " + id + " AND id_jour = ( SELECT id FROM jours WHERE nom = '" + options.jour + "' ) AND id_moment = (SELECT id FROM moments WHERE nom = '" + options.moment + "');";
                 }
                 else if (options.moment != null && options.jour == "semaine") {
                     
@@ -79,10 +80,10 @@ const supprimerRepasDuJour = function (options) {
                 // console.log("typeof rows[0] = " + typeof rows[0]);
                 // console.log(rows[0]);
                 if((typeof rows[0]) != "undefined"){
-                    res.status(200).json({ message: "La viande a été supprimée correctement"});
+                    res.status(200).json({ message: "Le repas a été supprimée correctement"});
                 }
                 else{
-                    res.status(200).json({ message: "La viande n'existe pas et ne peut donc pas être supprimée"});
+                    res.status(200).json({ message: "Le repas avec l'id suivant \"" + id + "\" n'existe pas dans la table \"repasdujour\" et ne peut donc pas être supprimée"});
                 }
         
             } catch (err) {
@@ -124,8 +125,8 @@ const ajouterRepasduJourDansViandes = function (options){
                 console.log(nom_bdd + " VS " + req.body.nom);
                 if (nom_bdd == req.body.nom) {
                     ajouterRepasDuJour(options, req.body.nom);
-                    console.warn("La viande " + req.body.nom + " ne peut pas être ajouté car elle existe déjà");
-                    return res.status(409).json({ message: "La viande " + req.body.nom + " ne peut pas être ajouté car elle existe déjà",
+                    console.warn("Le repas " + req.body.nom + " ne peut pas être ajouté car elle existe déjà");
+                    return res.status(409).json({ message: "Le repas " + req.body.nom + " ne peut pas être ajouté car elle existe déjà",
                                                 nom: req.body.nom,
                                                 presence: 1 });
                 }
@@ -133,7 +134,7 @@ const ajouterRepasduJourDansViandes = function (options){
                     nom_de_viande_a_ajouter(req.body.nom).then(()=>{
                         ajouterRepasDuJour(options, req.body.nom);
                     });
-                    res.status(200).json({ message: "La viande \"" + req.body.nom + "\" a été ajoutée correctement",
+                    res.status(200).json({ message: "Le repas \"" + req.body.nom + "\" a été ajoutée correctement",
                                         nom: req.body.nom,
                                         presence: 0});
                 }
@@ -182,7 +183,8 @@ async function ajouterRepasDuJour(options,reponse){
                         query += "((SELECT id FROM jours WHERE nom = 'dimanche'), (SELECT id FROM viandes WHERE nom LIKE '"+reponse+"'), 2);";
                 }
                 else if (options.moment != null && options.jour != "semaine") {
-                    var query = "INSERT INTO `repas du jour`(`id_jour`, `id_viande`, `id_moment`) VALUES ((SELECT id FROM jours WHERE nom = '"+options.jour+"'),(SELECT id FROM viandes WHERE nom = '"+reponse+"'),(SELECT id FROM moments WHERE nom = '"+options.moment+"'));";
+                    // var query = "INSERT INTO `repas du jour`(`id_jour`, `id_viande`, `id_moment`) VALUES ((SELECT id FROM jours WHERE nom = '"+options.jour+"'),(SELECT id FROM viandes WHERE nom = '"+reponse+"'),(SELECT id FROM moments WHERE nom = '"+options.moment+"'));";
+                    var query = "INSERT INTO `repas du jour`(`id_jour`, `id_viande`, `id_moment`) VALUES ((SELECT id FROM jours WHERE nom = '"+options.jour+"'),(SELECT MAX(id) FROM viandes WHERE nom = '"+reponse+"'),(SELECT id FROM moments WHERE nom = '"+options.moment+"'));";
                 }
                 else if (options.moment != null && options.jour == "semaine") {
                     var query = "INSERT INTO `repas du jour`(`id_jour`, `id_viande`, `id_moment`)";
@@ -212,7 +214,7 @@ async function ajouterRepasDuJour(options,reponse){
         }
         else{
             console.log("SINON data = " + data); // data correspond à l'ID de repas du jour
-            console.log("SINON reponse = " + reponse); // data correspond à la viande
+            console.log("SINON reponse = " + reponse); // data correspond à Le repas
             return null;
         }
     });
