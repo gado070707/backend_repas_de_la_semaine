@@ -150,7 +150,7 @@ async function requete_suppression_historique (repas,date,moment){
 
 const afficherLeRepasDuJour = (async function (req, res, next) {
     let conn;
-    const dateFormate = await conversionDeLaDatePourMariaDB(req.body.data.date);
+    const date_formate = await conversionDeLaDatePourMariaDB(req.body.data.date);
     if (typeof req.body.data.date == 'undefined' ) {
         console.error("Erreur. Impossible de récupérer la date. Date = " + req.body.data.date + " ! ");
         res.status(500).send({ success: false, error: "Erreur. Impossible de récupérer la date. Date = " + req.body.data.date + " ! " });
@@ -158,10 +158,10 @@ const afficherLeRepasDuJour = (async function (req, res, next) {
         try {
             conn = await pool.getConnection();
             // console.log(req.body.data.date);
-            // console.log(dateFormate);
-            // console.log(dateFormate.jour);
+            // console.log(date_formate);
+            // console.log(date_formate.jour);
             
-            const query = "SELECT v.nom FROM historiquerepasdesjours h INNER JOIN viandes v ON v.id = h.id_viandes WHERE h.datedujour = '" + dateFormate + "'";
+            const query = "SELECT v.nom FROM historiquerepasdesjours h INNER JOIN viandes v ON v.id = h.id_viandes WHERE h.datedujour = '" + date_formate + "'";
             var rows = await conn.query(query);
             // console.log("----------------------------------------------------------");
             // console.log(rows);
@@ -187,19 +187,20 @@ const afficherLeRepasDuJour = (async function (req, res, next) {
 
 
 const afficherLesRepasDeLaSemaine = (async function (req, res, next) {
-    const dateFormate = await conversionDeLaDatePourMariaDB(req.body.data.date);
+    const date_formate = await conversionDeLaDatePourMariaDB(req.body.data.date);
     const { lundi, mardi, mercredi, jeudi, vendredi, samedi, dimanche } = await recuperationDeLEnsembleDesJoursDeLaSemaineFormater(req.body.data.date);    
     // console.log(req.body.data.date);
     
     const jour = await obtenirLeNomDuJourEnToutesLettres(req.body.data.date);
+    let conn = await pool.getConnection();
     if (typeof req.body.data.date == 'undefined' ) {
         console.error("Erreur. Impossible de récupérer la date. Date = " + req.body.data.date + " ! ");
         res.status(500).send({ success: false, error: "Erreur. Impossible de récupérer la date. Date = " + req.body.data.date + " ! " });
     } else {
         try {
-            // console.log(dateFormate);
-            const query = "SELECT v.nom, CASE WHEN h.id_moment = 2 THEN 'midi' WHEN h.id_moment = 3 THEN 'soir' END AS moment, h.datedujour FROM historiquerepasdesjours h INNER JOIN viandes v ON v.id = h.id_viande WHERE h.datedujour = '" + dateFormate + "'";
-            let conn = await pool.getConnection();
+            // console.log(date_formate);
+            const query = "SELECT v.nom, CASE WHEN h.id_moment = 2 THEN 'midi' WHEN h.id_moment = 3 THEN 'soir' END AS moment, h.datedujour FROM historiquerepasdesjours h INNER JOIN viandes v ON v.id = h.id_viande WHERE h.datedujour = '" + date_formate + "'";
+            
                 const [nombreDEnregistrement] = await conn.query(query);
                 if ([nombreDEnregistrement].length > 0) {                    
                     // const query2 = "SELECT v.nom AS repas, h.datedujour AS date, DAYNAME(h.datedujour) AS jour, CASE WHEN h.id_moment = 2 THEN 'midi' WHEN h.id_moment = 3 THEN 'soir' ELSE 'KO' END AS moment FROM `historiquerepasdesjours` h LEFT JOIN `viandes` v ON v.id = h.id_viande LEFT JOIN `repas du jour` r ON r.id_viande = v.id WHERE h.datedujour BETWEEN DATE_FORMAT('" + lundi + "', '%Y-%m-%d') AND DATE_FORMAT('" + dimanche + "', '%Y-%m-%d') ORDER BY h.datedujour ASC";
@@ -300,7 +301,7 @@ const recuperationDeLaDate = (async function (req, res, next) {
 const afficherRepasDansLHistorique = (async function (req, res, next) {
     
     let conn;
-    const dateFormate = await conversionDeLaDatePourMariaDB(req.body.data.date);
+    const date_formate = await conversionDeLaDatePourMariaDB(req.body.data.date);
     if (typeof req.body.data.date == 'undefined' ) {
         console.error("Erreur. Impossible de récupérer la date. Date = " + req.body.data.date + " ! ");
         res.status(500).send({ success: false, error: "Erreur. Impossible de récupérer la date. Date = " + req.body.data.date + " ! " });
@@ -308,10 +309,10 @@ const afficherRepasDansLHistorique = (async function (req, res, next) {
         try {
             conn = await pool.getConnection();
             // console.log(req.body.data.date);
-            // console.log(dateFormate);
-            // console.log(dateFormate.jour);
+            // console.log(date_formate);
+            // console.log(date_formate.jour);
             
-            const query = "SELECT h.datedujour, v.nom, CASE WHEN h.id_moment = 2 THEN 'midi' WHEN h.id_moment = 3 THEN 'soir' END moment FROM historiquerepasdesjours h INNER JOIN viandes v ON v.id = h.id_viande WHERE h.datedujour = '" + dateFormate + "' AND h.id_moment = ( SELECT id FROM moments WHERE nom = '" +req.body.data.moment + "')";
+            const query = "SELECT h.datedujour, v.nom, CASE WHEN h.id_moment = 2 THEN 'midi' WHEN h.id_moment = 3 THEN 'soir' END moment FROM historiquerepasdesjours h INNER JOIN viandes v ON v.id = h.id_viande WHERE h.datedujour = '" + date_formate + "' AND h.id_moment = ( SELECT id FROM moments WHERE nom = '" +req.body.data.moment + "')";
             var rows = await conn.query(query);
 
             if (rows.length > 0) {
@@ -335,17 +336,34 @@ const afficherRepasDansLHistorique = (async function (req, res, next) {
 
 const ajoutDuRepasDansLHistorique = (async function (req, res, next) {
     // Formater la date afin qu'elle puisse correspondre avec une date de MariaDB
-    console.log("req.body.date = " + req.body.date );
+    // console.log("req.body.date = " + req.body.date );
+    const ancienn_date = req.body.date;
+    // console.log("Ancienne date = " + ancienn_date);
     
-    const dateFormate = await conversionDeLaDatePourMariaDB(req.body.date);
+    // const regex = /(\w+) (\d{1,2}) (\w+) (\d{4})/;
+    const regex = /\w+\s+(\d{1,2})\s+([\wéèêëàâäôöûüç-]+)\s+(\d{4})/i;
+
+    const match = ancienn_date.match(regex);
+    let date_formate;   
+    if (!match) {
+        // console.log("non match");
+        date_formate = await conversionDeLaDatePourMariaDB(ancienn_date);
+    } else {
+        // console.log("match");
+        date_formate = await transformer_une_date(ancienn_date);
+        date_formate = await conversionDeLaDatePourMariaDB(date_formate);
+    }
+
+    // console.log("date_formate = " + date_formate);
+    
     const verif_viande = await estPresenteTViande(req.body.repas);
-    const verif_historique = await estPresenteTHistoriqueRepasDesJours(req.body.repas,dateFormate,req.body.moment);
+    const verif_historique = await estPresenteTHistoriqueRepasDesJours(req.body.repas,date_formate,req.body.moment);
 
     if (verif_viande) {
         if (verif_historique){
             res.status(200).send({ success: true, message: "Le repas existe déjà dans l'historique." });
         } else {
-            await requete_ajout_historique(req.body.repas,dateFormate,req.body.moment);
+            await requete_ajout_historique(req.body.repas,date_formate,req.body.moment);
             res.status(200).send({ success: true, message: "Ajout du repas " + req.body.repas + " dans l'historique !"});
         }
     } else {
@@ -353,7 +371,7 @@ const ajoutDuRepasDansLHistorique = (async function (req, res, next) {
         if (verif_historique){
             res.status(200).send({ success: true, message: "Le repas existe dans l'historique mais pas dans la table viande" });
         } else {
-            await requete_ajout_historique(req.body.repas,dateFormate,req.body.moment);
+            await requete_ajout_historique(req.body.repas,date_formate,req.body.moment);
             res.status(200).send({ success: true, message: "Ajout du repas " + req.body.repas + " dans l'historique et dans la table viande !"});
         }
     }
@@ -363,12 +381,12 @@ const ajoutDuRepasDansLHistorique = (async function (req, res, next) {
 
 const supprimerRepasDansLHistorique = (async function (req, res, next) {
     // Formater la date afin qu'elle puisse correspondre avec une date de MariaDB
-    const dateFormate = await conversionDeLaDatePourMariaDB(req.body.date);
-    const verif_historique = await estPresenteTHistoriqueRepasDesJours(req.body.repas,dateFormate,req.body.moment);
+    const date_formate = await conversionDeLaDatePourMariaDB(req.body.date);
+    const verif_historique = await estPresenteTHistoriqueRepasDesJours(req.body.repas,date_formate,req.body.moment);
 
 
     if (verif_historique){
-        await requete_suppression_historique(req.body.repas,dateFormate,req.body.moment);
+        await requete_suppression_historique(req.body.repas,date_formate,req.body.moment);
         res.status(200).send({ success: true, message: "Suppression du repas " + req.body.repas + " dans l'historique !"});
     } else {
         res.status(200).send({ success: true, message: "Le repas n'existe pas. Inutile de le supprimer" });
@@ -550,6 +568,57 @@ async function obtenirLeNomDuJourEnToutesLettres(dateString){
         const jourEnToutesLettres = date.toLocaleDateString("fr-FR", { weekday: "long" });
         // console.log(jourEnToutesLettres);
         resolve(jourEnToutesLettres);
+    });
+}
+
+
+
+// Transformer une date de "jeudi 6 février 2025" en "05-02-25"
+async function transformer_une_date(ancienne_date){
+    return new Promise((resolve, reject) => {
+
+
+        // Tableau des mois en français
+        const moisFr = {
+            "janvier": "01",
+            "février": "02",
+            "mars": "03",
+            "avril": "04",
+            "mai": "05",
+            "juin": "06",
+            "juillet": "07",
+            "août": "08",
+            "septembre": "09",
+            "octobre": "10",
+            "novembre": "11",
+            "décembre": "12"
+        };
+    
+        // Regex pour extraire le jour, le mois et l'année
+        const regex = /\w+\s+(\d{1,2})\s+([\wéèêëàâäôöûüç-]+)\s+(\d{4})/i;
+        const match = ancienne_date.match(regex);
+    
+        if (!match) {
+            reject("Format de date incorrect");
+        }
+    
+        let [_, jour, mois, annee] = match;
+        
+        // Ajout de zéro si le jour est sur un chiffre
+        jour = jour.padStart(2, '0');
+        
+        // Conversion du mois en nombre
+        const moisNum = moisFr[mois.toLowerCase()];
+        
+        if (!moisNum) {
+            reject("Mois non reconnu");
+        }
+    
+        // Récupérer les deux derniers chiffres de l'année
+        annee = annee.slice(-2);
+    
+        // Format final
+        resolve(`${jour}-${moisNum}-${annee}`);
     });
 }
 
