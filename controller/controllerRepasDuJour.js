@@ -44,7 +44,6 @@ const supprimerRepasDuJour = function (options) {
     return (async function (req, res, next){    
         let conn;
         console.log("supprimer req.body.nom = " + req.body.nom);
-
         verification_de_la_presence_du_nom_de_la_viande_dans_la_bdd_table_repasdujour(options, req.body.nom).then(async function (id){
             try {
                 conn = await pool.getConnection();

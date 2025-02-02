@@ -199,6 +199,7 @@ const afficherLesRepasDeLaSemaine = (async function (req, res, next) {
     } else {
         try {
             // console.log(date_formate);
+            await conn.query("SET lc_time_names = 'fr_FR'");
             const query = "SELECT v.nom, CASE WHEN h.id_moment = 2 THEN 'midi' WHEN h.id_moment = 3 THEN 'soir' END AS moment, h.datedujour FROM historiquerepasdesjours h INNER JOIN viandes v ON v.id = h.id_viande WHERE h.datedujour = '" + date_formate + "'";
             
                 const [nombreDEnregistrement] = await conn.query(query);
@@ -351,10 +352,10 @@ const ajoutDuRepasDansLHistorique = (async function (req, res, next) {
     } else {
         // console.log("match");
         date_formate = await transformer_une_date(ancienn_date);
-        date_formate = await conversionDeLaDatePourMariaDB(date_formate);
+        // date_formate = await conversionDeLaDatePourMariaDB2(date_formate);
+        // console.log("date_formate = " + date_formate);
     }
 
-    // console.log("date_formate = " + date_formate);
     
     const verif_viande = await estPresenteTViande(req.body.repas);
     const verif_historique = await estPresenteTHistoriqueRepasDesJours(req.body.repas,date_formate,req.body.moment);
@@ -381,7 +382,23 @@ const ajoutDuRepasDansLHistorique = (async function (req, res, next) {
 
 const supprimerRepasDansLHistorique = (async function (req, res, next) {
     // Formater la date afin qu'elle puisse correspondre avec une date de MariaDB
-    const date_formate = await conversionDeLaDatePourMariaDB(req.body.date);
+    console.log("req.body.date == " + req.body.date);
+    const ancienn_date = req.body.date;
+    // console.log("Ancienne date = " + ancienn_date);
+    
+    // const regex = /(\w+) (\d{1,2}) (\w+) (\d{4})/;
+    const regex = /\w+\s+(\d{1,2})\s+([\wéèêëàâäôöûüç-]+)\s+(\d{4})/i;
+
+    const match = ancienn_date.match(regex);
+    let date_formate;   
+    if (!match) {
+        // console.log("non match");
+        date_formate = await conversionDeLaDatePourMariaDB(ancienn_date);
+    } else {
+        // console.log("match");
+        date_formate = await transformer_une_date(ancienn_date);
+    }
+    
     const verif_historique = await estPresenteTHistoriqueRepasDesJours(req.body.repas,date_formate,req.body.moment);
 
 
@@ -480,6 +497,26 @@ async function conversionDeLaDatePourMariaDB(date) {
     resolve(formattedDate);
     });
 }
+
+
+
+async function conversionDeLaDatePourMariaDB2(date) {
+    return new Promise(async (resolve) => {
+
+    // Créez un objet Date à partir de la chaîne de caractères
+    var dateObj = new Date(date);
+
+    // Obtenez l'année, le mois et le jour de la date
+    var year = dateObj.getFullYear();
+    var day = (dateObj.getMonth() + 1).toString().padStart(2, '0'); // Ajoutez 1 au mois car il est basé sur 0-index
+    var month = dateObj.getDate().toString().padStart(2, '0');
+
+    // Créez la nouvelle chaîne de caractères au format "yyyy-MM-dd"
+    var formattedDate = `${year}-${month}-${day}`;
+    resolve(formattedDate);
+    });
+}
+
 
 
 
@@ -618,7 +655,7 @@ async function transformer_une_date(ancienne_date){
         annee = annee.slice(-2);
     
         // Format final
-        resolve(`${jour}-${moisNum}-${annee}`);
+        resolve(`${annee}-${moisNum}-${jour}`);
     });
 }
 
